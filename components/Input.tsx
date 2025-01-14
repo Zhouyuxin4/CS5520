@@ -14,6 +14,7 @@ export default function App({isFocused}:InputProps) {
   function updateText(changedText:string){
     setText(changedText);
     setCounter(changedText.length.toString())
+    setBlur(false)
   }
 
   function handleFocused(){
