@@ -1,21 +1,50 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View, Text} from 'react-native';
 import { useState } from 'react';
 
-export default function App() {
+interface InputProps{
+    isFocused: boolean
+}
+
+export default function App({isFocused}:InputProps) {
   const [text, setText] = useState("")
+  const [counter, setCounter] = useState("")
+  const [blur, setBlur] = useState(false)
 
   function updateText(changedText:string){
-    console.log(changedText),
-    setText(changedText)
+    setText(changedText);
+    setCounter(changedText.length.toString())
+    setBlur(false)
+  }
+
+  function handleFocused(){
+    setBlur(false);
+  }
+
+  function handleBlur(){
+    setBlur(true);
   }
 
   return (
     <View >
       <TextInput value={text} 
       onChangeText={updateText}
-      placeholder='1'/>
+      onFocus={handleFocused}
+      onBlur={handleBlur}
+      placeholder='enter here'
+      autoFocus={isFocused} />
 
+    {text && !blur?(
+        <Text>character count:{counter}</Text>
+    ):(
+        blur && (text.length >= 3?(
+          <Text>Thank you</Text>  
+        ):(
+          <Text>Please type more than 3 characters</Text>
+        ))
+    )}
+
+    <StatusBar style="auto"/>
     </View>
   );
 }
