@@ -1,12 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, TextInput, View, Text} from 'react-native';
+import { StyleSheet, TextInput, View, Text, Button} from 'react-native';
 import { useState } from 'react';
 
 interface InputProps{
-    isFocused: boolean
+    isFocused: boolean;
+    inputHandler: (data: string)=>void;
 }
 
-export default function App({isFocused}:InputProps) {
+
+
+export default function App({isFocused, inputHandler}:InputProps) {
   const [text, setText] = useState("")
   const [counter, setCounter] = useState("")
   const [blur, setBlur] = useState(false)
@@ -23,6 +26,11 @@ export default function App({isFocused}:InputProps) {
 
   function handleBlur(){
     setBlur(true);
+  }
+
+  function handleConfirm(){
+    console.log('User input:', text);
+    inputHandler(text);
   }
 
   return (
@@ -43,6 +51,7 @@ export default function App({isFocused}:InputProps) {
           <Text>Please type more than 3 characters</Text>
         ))
     )}
+    <Button title="Confirm" onPress={handleConfirm} />
 
     <StatusBar style="auto"/>
     </View>
@@ -50,10 +59,10 @@ export default function App({isFocused}:InputProps) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  });
