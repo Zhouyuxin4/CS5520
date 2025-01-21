@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, TextInput, View, Text, Button, Modal, Alert} from 'react-native';
+import { StyleSheet, TextInput, View, Text, Button, Modal, Alert, Image} from 'react-native';
 import { useState } from 'react';
 
 interface InputProps {
@@ -13,6 +13,8 @@ export default function App({ isFocused, inputHandler, isModalVisible,onCancel}:
   const [text, setText] = useState(''); 
   const [counter, setCounter] = useState('');
   const [blur, setBlur] = useState(false);
+  const minLength = 3
+  const localImage = require('../assets/goal-image.png')
 
   function updateText(changedText: string) {
     setText(changedText);
@@ -31,9 +33,11 @@ export default function App({ isFocused, inputHandler, isModalVisible,onCancel}:
   function handleConfirm() {
     console.log('User input:', text);
     inputHandler(text);
+    setText("")
   }
 
   function handleCancel() {
+    setText("")
     Alert.alert(
       "Cancel?",
       "Are you sure you want to cancel?",
@@ -48,6 +52,16 @@ export default function App({ isFocused, inputHandler, isModalVisible,onCancel}:
     <Modal visible={isModalVisible} animationType='slide' transparent={true}>
       <View style={styles.container}>
         <View style={styles.box}>
+        <Image
+            style={styles.image}
+            source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2617/2617812.png' }}
+            alt="Goal icon from website"
+          />
+          <Image
+            style={styles.image}
+            source={localImage}
+            alt="Goal icon from local"
+          />
           <TextInput
             value={text}
             onChangeText={updateText}
@@ -61,11 +75,11 @@ export default function App({ isFocused, inputHandler, isModalVisible,onCancel}:
             <Text>character count: {counter}</Text>
           ) : (
             blur &&
-            (text.length >= 3 ? <Text>Thank you</Text> : <Text>Please type more than 3 characters</Text>)
+            (text.length >= minLength ? <Text>Thank you</Text> : <Text>Please type more than 3 characters</Text>)
           )}
           <View style={styles.button}>
-            <Button title="Cancel" onPress={handleCancel}></Button>
-            <Button title='Confirm' onPress={handleConfirm} />
+            <Button title="Cancel" onPress={handleCancel} />
+            <Button title='Confirm' onPress={handleConfirm} disabled={text.length < minLength}/>
           </View>
           <StatusBar style='auto' />
         </View>
@@ -85,7 +99,7 @@ const styles = StyleSheet.create({
     borderRadius: 20, 
     padding: 30,
     alignItems: 'center', 
-    width: '50%', 
+    width: '70%', 
   },
   input: {
     borderColor: 'purple',
@@ -96,7 +110,14 @@ const styles = StyleSheet.create({
     width: '100%', 
   },
   button: {
-    width:"60%",
-    marginTop: 20,
+    flexDirection:'row',
+    justifyContent:"space-between",
+    alignItems: 'center',
+    marginTop: 20, 
   },
+  image:{
+    width:100,
+    height:100,
+    marginBottom:10
+  }
 });
