@@ -5,16 +5,22 @@ import Input from "./components/Input"
 import { useState } from 'react';
 
 export default function App() {
-  const [isFocused, setIsFocused] = useState(true)
+  const [isFocused, setIsFocused] = useState(true);
+  const [recievedData, setRecievedData] = useState("")
   const appName = "My awesome app"
+
+  function handleInputData(data: string){
+    console.log("data recieved from Input", data)
+    setRecievedData(data)
+  }
 
   return (
     <View style={styles.container}>
       <Header name={appName} />
-      <Input isFocused={isFocused} />
+      <Input isFocused={isFocused} inputHandler={handleInputData} />
       <Text 
         onPress={() => setIsFocused(!isFocused)}
-      >
+      >{recievedData}
       </Text>
       <StatusBar style="auto" />
     </View>
