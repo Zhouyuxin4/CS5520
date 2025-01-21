@@ -57,12 +57,12 @@ export default function App({ isFocused, inputHandler, isModalVisible,onCancel}:
             source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2617/2617812.png' }}
             alt="Goal icon from website"
           />
-          <Image
+        <Image
             style={styles.image}
             source={localImage}
             alt="Goal icon from local"
           />
-          <TextInput
+        <TextInput
             value={text}
             onChangeText={updateText}
             onFocus={handleFocused}
@@ -77,10 +77,14 @@ export default function App({ isFocused, inputHandler, isModalVisible,onCancel}:
             blur &&
             (text.length >= minLength ? <Text>Thank you</Text> : <Text>Please type more than 3 characters</Text>)
           )}
-          <View style={styles.button}>
+        <View style={styles.button}>
+        <View style={styles.buttonWrapper}>
             <Button title="Cancel" onPress={handleCancel} />
-            <Button title='Confirm' onPress={handleConfirm} disabled={text.length < minLength}/>
-          </View>
+        </View>
+        <View style={styles.buttonWrapper}>
+            <Button title='Confirm' onPress={handleConfirm} disabled={text.length < minLength} />
+        </View>
+        </View>
           <StatusBar style='auto' />
         </View>
       </View>
@@ -113,7 +117,10 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     justifyContent:"space-between",
     alignItems: 'center',
-    marginTop: 20, 
+    marginTop: 20
+  },
+  buttonWrapper:{
+    marginHorizontal: 10,
   },
   image:{
     width:100,
