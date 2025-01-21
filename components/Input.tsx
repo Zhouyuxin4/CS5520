@@ -1,15 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, TextInput, View, Text, Button, Modal } from 'react-native';
+import { StyleSheet, TextInput, View, Text, Button, Modal, Alert} from 'react-native';
 import { useState } from 'react';
 
 interface InputProps {
   isFocused: boolean;
   inputHandler: (data: string) => void;
   isModalVisible: boolean;
+  onCancel:()=>void;
 }
 
-export default function App({ isFocused, inputHandler, isModalVisible }: InputProps) {
-  const [text, setText] = useState('');
+export default function App({ isFocused, inputHandler, isModalVisible,onCancel}: InputProps) {
+  const [text, setText] = useState(''); 
   const [counter, setCounter] = useState('');
   const [blur, setBlur] = useState(false);
 
@@ -32,6 +33,17 @@ export default function App({ isFocused, inputHandler, isModalVisible }: InputPr
     inputHandler(text);
   }
 
+  function handleCancel() {
+    Alert.alert(
+      "Cancel?",
+      "Are you sure you want to cancel?",
+      [
+        { text: "cancel", style: "cancel" },
+        { text: "OK", onPress: () => onCancel() }
+      ]
+    );
+  }
+
   return (
     <Modal visible={isModalVisible} animationType='slide' transparent={true}>
       <View style={styles.container}>
@@ -52,6 +64,7 @@ export default function App({ isFocused, inputHandler, isModalVisible }: InputPr
             (text.length >= 3 ? <Text>Thank you</Text> : <Text>Please type more than 3 characters</Text>)
           )}
           <View style={styles.button}>
+            <Button title="Cancel" onPress={handleCancel}></Button>
             <Button title='Confirm' onPress={handleConfirm} />
           </View>
           <StatusBar style='auto' />
