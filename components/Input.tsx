@@ -1,17 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, TextInput, View, Text, Button, Modal } from 'react-native';
+import { StyleSheet, TextInput, View, Text, Button, Modal, Alert, Image} from 'react-native';
 import { useState } from 'react';
 
 interface InputProps {
   isFocused: boolean;
   inputHandler: (data: string) => void;
   isModalVisible: boolean;
+  onCancel:()=>void;
 }
 
-export default function App({ isFocused, inputHandler, isModalVisible }: InputProps) {
-  const [text, setText] = useState('');
+export default function App({ isFocused, inputHandler, isModalVisible,onCancel}: InputProps) {
+  const [text, setText] = useState(''); 
   const [counter, setCounter] = useState('');
   const [blur, setBlur] = useState(false);
+  const minLength = 3
+  const localImage = require('../assets/goal-image.png')
 
   function updateText(changedText: string) {
     setText(changedText);
@@ -30,13 +33,36 @@ export default function App({ isFocused, inputHandler, isModalVisible }: InputPr
   function handleConfirm() {
     console.log('User input:', text);
     inputHandler(text);
+    setText("")
+  }
+
+  function handleCancel() {
+    setText("")
+    Alert.alert(
+      "Cancel?",
+      "Are you sure you want to cancel?",
+      [
+        { text: "cancel", style: "cancel" },
+        { text: "OK", onPress: () => onCancel() }
+      ]
+    );
   }
 
   return (
     <Modal visible={isModalVisible} animationType='slide' transparent={true}>
       <View style={styles.container}>
         <View style={styles.box}>
-          <TextInput
+        <Image
+            style={styles.image}
+            source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2617/2617812.png' }}
+            alt="Goal icon from website"
+          />
+        <Image
+            style={styles.image}
+            source={localImage}
+            alt="Goal icon from local"
+          />
+        <TextInput
             value={text}
             onChangeText={updateText}
             onFocus={handleFocused}
@@ -49,11 +75,16 @@ export default function App({ isFocused, inputHandler, isModalVisible }: InputPr
             <Text>character count: {counter}</Text>
           ) : (
             blur &&
-            (text.length >= 3 ? <Text>Thank you</Text> : <Text>Please type more than 3 characters</Text>)
+            (text.length >= minLength ? <Text>Thank you</Text> : <Text>Please type more than 3 characters</Text>)
           )}
-          <View style={styles.button}>
-            <Button title='Confirm' onPress={handleConfirm} />
-          </View>
+        <View style={styles.button}>
+        <View style={styles.buttonWrapper}>
+            <Button title="Cancel" onPress={handleCancel} />
+        </View>
+        <View style={styles.buttonWrapper}>
+            <Button title='Confirm' onPress={handleConfirm} disabled={text.length < minLength} />
+        </View>
+        </View>
           <StatusBar style='auto' />
         </View>
       </View>
@@ -72,7 +103,7 @@ const styles = StyleSheet.create({
     borderRadius: 20, 
     padding: 30,
     alignItems: 'center', 
-    width: '50%', 
+    width: '70%', 
   },
   input: {
     borderColor: 'purple',
@@ -83,7 +114,17 @@ const styles = StyleSheet.create({
     width: '100%', 
   },
   button: {
-    width:"60%",
-    marginTop: 20,
+    flexDirection:'row',
+    justifyContent:"space-between",
+    alignItems: 'center',
+    marginTop: 20
   },
+  buttonWrapper:{
+    marginHorizontal: 10,
+  },
+  image:{
+    width:100,
+    height:100,
+    marginBottom:10
+  }
 });

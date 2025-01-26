@@ -20,15 +20,22 @@ export default function App() {
     setISModalVisible(true)
   }
 
+  function handleCancelAction(){
+    setISModalVisible(false)
+  }
+
   return (
     <SafeAreaView style = {styles.container}>
+      <View style= {styles.topContainer}>
       <View style = {styles.welcome}>
       <Header name={appName}/>
       </View>
       <View style = {styles.button}>
-      <Input isFocused={isFocused} inputHandler={handleInputData} isModalVisible={isModalVisible}   />
+      <Input isFocused={isFocused} inputHandler={handleInputData} isModalVisible={isModalVisible}  onCancel={handleCancelAction}/>
       <Button title="Add a goal" onPress={handleModalVisibility}/></View>
-      <View><Text 
+      </View>
+
+      <View style={styles.buttonContainer}><Text 
         onPress={() => setIsFocused(!isFocused)}  style = {styles.output}
       >{recievedData}
       </Text>
@@ -59,5 +66,16 @@ const styles = StyleSheet.create({
     marginTop:20,
     color:"purple",
     fontSize:18
+  },
+  topContainer:{
+    flex:1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonContainer:{
+    flex:4,
+    alignItems: 'center',
+    backgroundColor:"pink",
+    width:"100%"
   }
 });
