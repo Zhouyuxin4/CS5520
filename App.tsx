@@ -35,10 +35,10 @@ export default function App() {
       <Button title="Add a goal" onPress={handleModalVisibility}/></View>
       </View>
 
-      <View style={styles.buttonContainer}><Text 
+      <View style={styles.buttonContainer}>{recievedData&&<Text 
         onPress={() => setIsFocused(!isFocused)}  style = {styles.output}
       >{recievedData}
-      </Text>
+      </Text>}
       </View>
       <StatusBar style="auto" />
     </SafeAreaView>
@@ -65,7 +65,10 @@ const styles = StyleSheet.create({
   output:{
     marginTop:20,
     color:"purple",
-    fontSize:18
+    fontSize:18,
+    backgroundColor:"#ccc",
+    padding:10,
+    borderRadius:10
   },
   topContainer:{
     flex:1,
