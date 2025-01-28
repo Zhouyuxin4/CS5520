@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, TextInput, View, Text, Button, SafeAreaView, FlatList, } from 'react-native';
+import { StyleSheet, TextInput, View, Text, Button, SafeAreaView, FlatList, ScrollView, } from 'react-native';
 import Header from "./components/Header"
 import Input from "./components/Input"
 import { useState } from 'react';
@@ -55,8 +55,8 @@ export default function App() {
           <Input isFocused={isFocused} inputHandler={handleInputData} isModalVisible={isModalVisible} onCancel={handleCancelAction} />
           <Button title="Add a goal" onPress={handleModalVisibility} /></View>
       </View>
-      <View style={styles.buttonContainer}>
-      <FlatList
+      <View style={styles.bottomContainer}>
+      <FlatList style ={styles.contentContainer} contentContainerStyle={styles.innerContainer}
         data={goals}
         renderItem={({ item }) => {
           return <GoalItem goalObj={item} deleteHandler={handleDeleteGoal}/>
@@ -97,10 +97,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonContainer: {
+  bottomContainer: {
     flex: 4,
     alignItems: 'center',
     backgroundColor: "pink",
-    width: "100%"
+    width:"100%"
+
+  },
+  contentContainer:{
+    width:"100%"
+  },
+  innerContainer:{
+    alignItems:"center"
   }
 });
