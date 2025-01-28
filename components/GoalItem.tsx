@@ -21,7 +21,7 @@ export default function GoalItem({goalObj, deleteHandler}:GoalItemProps){
 
 const styles = StyleSheet.create({
     output: {
-      marginBottom:100,
+      marginBottom: 30,
       backgroundColor: "#ccc",
       padding: 10,
       borderRadius: 10,
