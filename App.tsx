@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, TextInput, View, Text, Button, SafeAreaView, FlatList, ScrollView, } from 'react-native';
+import { StyleSheet, TextInput, View, Text, Button, SafeAreaView, FlatList, ScrollView, Alert} from 'react-native';
 import Header from "./components/Header"
 import Input from "./components/Input"
 import { useState } from 'react';
@@ -45,6 +45,17 @@ export default function App() {
     setGoals(()=>newArray)
   }
 
+  function handleDeleteAllGoals(){
+    Alert.alert(
+      "Delete All Goals",
+      "You will delete all goals.",
+      [
+        { text: "No", style: "cancel" },
+        { text: "Yes", onPress: () => setGoals([]) },
+      ]
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topContainer}>
@@ -56,11 +67,17 @@ export default function App() {
           <Button title="Add a goal" onPress={handleModalVisibility} /></View>
       </View>
       <View style={styles.bottomContainer}>
-      <FlatList style ={styles.contentContainer} contentContainerStyle={styles.innerContainer}
+      <FlatList 
+        style ={styles.contentContainer} 
+        contentContainerStyle={styles.innerContainer}
         data={goals}
         renderItem={({ item }) => {
           return <GoalItem goalObj={item} deleteHandler={handleDeleteGoal}/>
         }}
+        ListEmptyComponent={<Text style={styles.text}>No goals to show</Text>}
+        ListHeaderComponent={goals.length > 0 ? (<Text style={styles.text}>My Goals</Text>) : null}
+        ListFooterComponent={goals.length > 0 ? (<Button title="Delete all" onPress={handleDeleteAllGoals}/> ): null}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
     </View>
       <StatusBar style="auto" />
@@ -109,5 +126,16 @@ const styles = StyleSheet.create({
   },
   innerContainer:{
     alignItems:"center"
-  }
+  },
+  text:{
+    color:"#800080",
+    fontSize:18,
+    margin:20
+  },
+  separator: {
+    height: 4,
+    backgroundColor: '#808080',
+    marginHorizontal: 10,
+    marginBottom:30
+  },
 });
