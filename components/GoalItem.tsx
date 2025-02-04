@@ -1,13 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, TextInput, View, Text, Button, Modal, Alert, Image} from 'react-native';
 import { useState } from 'react';
+import { GoalDB }from"@/App"
 
 interface GoalItemProps{
-  goalObj:{
-    text: string;
-    id: number;
-  }
-  deleteHandler:(deleteId:number)=>void
+  goalObj:GoalDB
+  deleteHandler:(deleteId:string)=>void
 }
 
 export default function GoalItem({goalObj, deleteHandler}:GoalItemProps){
