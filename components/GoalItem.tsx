@@ -1,10 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, TextInput, View, Text, Button, Modal, Alert, Image} from 'react-native';
 import { useState } from 'react';
-import { GoalDB }from"@/App"
+import { Link, router } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 interface GoalItemProps{
-  goalObj:GoalDB
+  goalObj:{
+    text: string;
+    id: string;
+  }
   deleteHandler:(deleteId:string)=>void
 }
 
@@ -13,6 +17,11 @@ export default function GoalItem({goalObj, deleteHandler}:GoalItemProps){
         <View style={styles.output}>
           <Text style={styles.text}>{goalObj.text}</Text>
           <Button title="X" onPress={()=>{deleteHandler(goalObj.id)}}/>
+          <Link  href={`/goals/${goalObj.id}`}>info</Link>
+          {/* <Button title="info"
+          onPress={()=>{ 
+            router.navigate(`/goals/${goalObj.id}`)
+          }}/> */}
         </View>
       );
 }
