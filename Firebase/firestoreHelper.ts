@@ -1,11 +1,11 @@
 import { database } from "./firebaseSetup";
 import { collection, addDoc, deleteDoc, doc, getDocs, setDoc, getDoc } from "firebase/firestore"; 
 
-export interface GoalData{
-    warning?: boolean;
+export interface GoalData {
     text: string;
-    id:string;
-}
+    warning?: boolean;
+  }
+
 export async function writeToDB(data:GoalData, collectionName:string){
     try{
         const docRef = await addDoc(collection(database,collectionName),data)

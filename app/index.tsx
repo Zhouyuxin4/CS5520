@@ -10,29 +10,28 @@ import { GoalData } from '../Firebase/firestoreHelper';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { query } from 'express';
 
-export interface GoalDB {
-  text: string;
+export interface GoalFromDB extends GoalData {
   id: string;
 }
 export default function App() {
   console.log(database)
   const [isFocused, setIsFocused] = useState(true);
   const [isModalVisible, setISModalVisible] = useState(false)
-  const [goals, setGoals] = useState<GoalDB[]>([])
+  const [goals, setGoals] = useState<GoalFromDB[]>([])
   const appName = "My awesome app"
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(database, "goals"), (querySnapshot) => {
       if (querySnapshot.empty) {
         setGoals([])
       } else {
-        let newArrayOfGoals: GoalDB[] = []
+        let newArrayOfGoals: GoalFromDB[] = []
         querySnapshot.forEach((docSnapshot) => {
           console.log(docSnapshot.id)
           const goalData: GoalData = docSnapshot.data() as GoalData;
           newArrayOfGoals.push({
+            ...(docSnapshot.data() as GoalData),
             id: docSnapshot.id,
-            ...goalData,
-          })
+          });
           setGoals(newArrayOfGoals)
         })
       }
@@ -45,6 +44,7 @@ export default function App() {
   function handleInputData(data: string) {
     console.log("data recieved from Input", data)
     setISModalVisible(false)
+    
     let newGoal: GoalData = {
       text: data,
     }
