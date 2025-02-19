@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Stack, useLocalSearchParams, useNavigation } from "expo-router";
 import { GoalData, readDocFromDB, updateDB } from "@/Firebase/firestoreHelper";
 import Entypo from '@expo/vector-icons/Entypo';
+import PressableButton from "@/components/PressableButton";
 
 
 export default function GoalDetails() {
@@ -38,7 +39,11 @@ export default function GoalDetails() {
         options={{
           headerTitle: goal ? (warning ? "warning" : goal.text) : "",
           headerRight: () => {
-            return <Button title="Warning" onPress={warningHandler} />;
+            return <PressableButton 
+            pressedHandler={warningHandler}
+            >
+            <Entypo name="warning" size={24} color="black" />
+          </PressableButton>;
           },
         }}
       />

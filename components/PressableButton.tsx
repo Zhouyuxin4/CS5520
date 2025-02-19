@@ -27,7 +27,7 @@ export default function PressableButton({pressedHandler,pressedInHandler,pressed
 
 const styles = StyleSheet.create({
     defaultStyle:{
-        backgroundColor:"darkgrey"
+        backgroundColor:"purple"
     },
     defaultPressedStyle:{
         opacity:0.5,
