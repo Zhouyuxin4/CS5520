@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Link, router } from 'expo-router';
 import { useRouter } from 'expo-router';
 import { GoalFromDB } from '@/app';
+import PressableButton from './PressableButton';
+import EvilIcons from '@expo/vector-icons/EvilIcons';
 
 interface GoalItemProps{
   goalObj:GoalFromDB;
@@ -13,14 +15,26 @@ interface GoalItemProps{
 export default function GoalItem({goalObj, deleteHandler}:GoalItemProps){
     return (
         <Pressable 
-          style={styles.output}
+          android_ripple={styles.androidRipple}
+          style={({pressed})=>{
+            return [styles.output, pressed&&styles.pressed];
+          }}
+          //style={styles.output}
           onPress={()=>{
             router.navigate(`/goals/${goalObj.id}`)
           }}
-          
         >
           <Text style={styles.text}>{goalObj.text}</Text>
-          <Button title="X" onPress={()=>{deleteHandler(goalObj.id)}}/>
+          <PressableButton 
+          pressedHandler={()=>{
+              deleteHandler(goalObj.id)
+            }}
+          componentStyle={{backgroundColor:"grey"}}
+          pressedStyle={styles.pressed}
+          >
+          <EvilIcons name="trash" size={30} color="black" />
+          </PressableButton>
+          {/* <Button title="X" onPress={()=>{ }/> */}
           {/* <Button title="info"
           onPress={()=>{ 
             router.navigate(`/goals/${goalObj.id}`)
@@ -32,15 +46,23 @@ export default function GoalItem({goalObj, deleteHandler}:GoalItemProps){
 const styles = StyleSheet.create({
     output: {
       marginBottom: 30,
-      backgroundColor: "#ccc",
-      padding: 10,
+      backgroundColor: "grey",
+      padding: 12,
       borderRadius: 10,
       flexDirection:"row",
-      alignItems:"center"
+      alignItems:"center",
     },
     text:{
       color:"#800080",
       fontSize:16,
+      paddingHorizontal:15
+    },
+    pressed:{
+      backgroundColor: "grey",
+      opacity:0.5
+    },
+    androidRipple:{
+      color:"red",
     }
   });
   

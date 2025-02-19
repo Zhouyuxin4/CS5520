@@ -9,6 +9,7 @@ import { deleteAllFromDB, deleteFromDB, writeToDB } from '../Firebase/firestoreH
 import { GoalData } from '../Firebase/firestoreHelper';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { query } from 'express';
+import PressableButton from '@/components/PressableButton';
 
 export interface GoalFromDB extends GoalData {
   id: string;
@@ -95,7 +96,13 @@ export default function App() {
         </View>
         <View style={styles.button}>
           <Input isFocused={isFocused} inputHandler={handleInputData} isModalVisible={isModalVisible} onCancel={handleCancelAction} />
-          <Button title="Add a goal" onPress={handleModalVisibility} /></View>
+          <PressableButton 
+          pressedHandler={handleModalVisibility}
+          componentStyle={{backgroundColor:"purple", borderRadius:10}}>
+            <Text style={styles.addGoalButton}>add a goal</Text>
+          </PressableButton>
+          {/* <Button title="Add a goal" onPress={handleModalVisibility} /> */}
+          </View>
       </View>
       <View style={styles.bottomContainer}>
         <FlatList
@@ -169,4 +176,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     marginBottom: 30
   },
+  addGoalButton:{
+    padding:12,
+    backgroundColor:"purple",
+    color:"white",
+    fontSize:18,
+    borderRadius:10
+  }
 });

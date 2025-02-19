@@ -2,6 +2,8 @@ import { View, Text, Button, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Stack, useLocalSearchParams, useNavigation } from "expo-router";
 import { GoalData, readDocFromDB, updateDB } from "@/Firebase/firestoreHelper";
+import Entypo from '@expo/vector-icons/Entypo';
+
 
 export default function GoalDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
