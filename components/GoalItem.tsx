@@ -10,11 +10,19 @@ import EvilIcons from '@expo/vector-icons/EvilIcons';
 interface GoalItemProps{
   goalObj:GoalFromDB;
   deleteHandler:(deleteId:string)=>void
+  separators: Separators
 }
 
-export default function GoalItem({goalObj, deleteHandler}:GoalItemProps){
+interface Separators {
+  highlight: () => void;
+  unhighlight: () => void;
+}
+
+export default function GoalItem({goalObj, deleteHandler, separators}:GoalItemProps){
     return (
         <Pressable 
+        onPressIn={() => separators.highlight()}
+        onPressOut={() => separators.unhighlight()}
           android_ripple={styles.androidRipple}
           style={({pressed})=>{
             return [styles.output, pressed&&styles.pressed];
@@ -22,6 +30,23 @@ export default function GoalItem({goalObj, deleteHandler}:GoalItemProps){
           //style={styles.output}
           onPress={()=>{
             router.navigate(`/goals/${goalObj.id}`)
+          }}
+          onLongPress={()=>{
+            Alert.alert(
+              'Delete Goal',
+              'Are you sure you want to delete this goal?',
+              [
+                {
+                  text: 'No',
+                  style: 'cancel',
+                },
+                {
+                  text: 'Yes',
+                  onPress: () =>  deleteHandler(goalObj.id),
+                  style: 'destructive',
+                },
+              ],
+            );
           }}
         >
           <Text style={styles.text}>{goalObj.text}</Text>

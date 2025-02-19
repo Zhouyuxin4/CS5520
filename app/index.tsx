@@ -109,13 +109,15 @@ export default function App() {
           style={styles.contentContainer}
           contentContainerStyle={styles.innerContainer}
           data={goals}
-          renderItem={({ item }) => {
-            return <GoalItem goalObj={item} deleteHandler={handleDeleteGoal} />
+          renderItem={({ item, separators}) => {
+            return <GoalItem goalObj={item} deleteHandler={handleDeleteGoal} separators={separators}/>
           }}
           ListEmptyComponent={<Text style={styles.text}>No goals to show</Text>}
           ListHeaderComponent={goals.length > 0 ? (<Text style={styles.text}>My Goals</Text>) : null}
           ListFooterComponent={goals.length > 0 ? (<Button title="Delete all" onPress={handleDeleteAllGoals} />) : null}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          ItemSeparatorComponent={({highlighted}) => {
+            console.log('Highlighted:', highlighted); 
+            return(<View style={[styles.separator, highlighted&&styles.separatorHighlighted]} />)}}
         />
       </View>
       <StatusBar style="auto" />
@@ -173,6 +175,12 @@ const styles = StyleSheet.create({
   separator: {
     height: 4,
     backgroundColor: '#808080',
+    marginHorizontal: 10,
+    marginBottom: 30
+  },
+  separatorHighlighted: {
+    height: 4,
+    backgroundColor: 'purple',
     marginHorizontal: 10,
     marginBottom: 30
   },
