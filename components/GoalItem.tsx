@@ -23,6 +23,23 @@ export default function GoalItem({goalObj, deleteHandler}:GoalItemProps){
           onPress={()=>{
             router.navigate(`/goals/${goalObj.id}`)
           }}
+          onLongPress={()=>{
+            Alert.alert(
+              'Delete Goal',
+              'Are you sure you want to delete this goal?',
+              [
+                {
+                  text: 'No',
+                  style: 'cancel',
+                },
+                {
+                  text: 'Yes',
+                  onPress: () =>  deleteHandler(goalObj.id),
+                  style: 'destructive',
+                },
+              ],
+            );
+          }}
         >
           <Text style={styles.text}>{goalObj.text}</Text>
           <PressableButton 
