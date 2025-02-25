@@ -1,12 +1,14 @@
+import { Users } from "@/components/GoalUsers";
 import { database } from "./firebaseSetup";
 import { collection, addDoc, deleteDoc, doc, getDocs, setDoc, getDoc } from "firebase/firestore"; 
+
 
 export interface GoalData {
     text: string;
     warning?: boolean;
   }
 
-export async function writeToDB(data:GoalData, collectionName:string){
+export async function writeToDB(data:GoalData|Users, collectionName:string){
     try{
         const docRef = await addDoc(collection(database,collectionName),data)
     }
@@ -49,6 +51,25 @@ export async function readDocFromDB(id: string, collectionName: string) {
       return null;
     } catch (e) {
       console.error("Error reading document: ", e);
+    }
+}
+
+export async function readAllFromDB(collectionName:string){
+    try{
+    const querySnapshot = await getDocs(collection(database,collectionName));
+    if(querySnapshot.empty) return null;
+    const data = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      console.log(data)
+    // const data: Users[] = [];
+    // querySnapshot.forEach(doc => {
+    //   data.push({ id: doc.id, ...doc.data() });
+    // });
+      return data; 
+    }catch(err){
+        console.error("Error reading document: ", err);
     }
 }
 
