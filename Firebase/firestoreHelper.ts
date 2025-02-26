@@ -54,33 +54,27 @@ export async function readDocFromDB(id: string, collectionName: string) {
     }
 }
 
-export async function readAllFromDB(collectionName:string){
-    try{
-    const querySnapshot = await getDocs(collection(database,collectionName));
-    if(querySnapshot.empty) return null;
-    const data = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      console.log(data)
-    // const data: Users[] = [];
-    // querySnapshot.forEach(doc => {
-    //   data.push({ id: doc.id, ...doc.data() });
-    // });
-      return data; 
-    }catch(err){
-        console.error("Error reading document: ", err);
-    }
-}
+//read all documents from the database
+export async function readAllFromDB(collectionName: string) {
+    const querySnapshot = await getDocs(collection(database, collectionName));
+    if (querySnapshot.empty) return null;
+    let data: Users[] = [];
+    querySnapshot.forEach((docSnapshot) => {
+      data.push(docSnapshot.data() as Users);
+    });
+    //return the data
+    return data;
+  }
 
 export async function updateDB(
-    id:string,
-    collectionName:string,
-    data:{[key:string]:any}
-){
-    try{
-        await setDoc(doc(database, collectionName, id), data, { merge: true })
-    }catch(err){
-        console.log(err)
+    id: string,
+    collectionName: string,
+    data: { [key: string]: any }
+  ) {
+    try {
+      //update a document in the database
+      await setDoc(doc(database, collectionName, id), data, { merge: true });
+    } catch (e) {
+      console.error("Error updating document: ", e);
     }
-}
+  }

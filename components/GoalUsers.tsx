@@ -37,25 +37,38 @@ interface GoalUserProps{
 }
 
 export default function GoalUser({goalId}:GoalUserProps) {
-  const [users, setUsers] = useState<Users[]>([]); 
+  const [users, setUsers] = useState<string[]>([]); 
+
 
   useEffect(() => {
     async function getUsers() {
       try {
-        console.log("read from db")
-        const userFromDB= await readAllFromDB(`goals/${goalId}/users`);
-        console.log(userFromDB)
-        const response = await fetch('https://jsonplaceholder.typicode.com/users');
-        if (!response.ok) {
-          throw new Error(`Something went wrong: ${response.status}`);
-        }
-        const data: Users[] = await response.json(); 
-        data.forEach(user => {
-            writeToDB(user, `goals/${goalId}/users`);
+        const userFromDB = await readAllFromDB(`goals/${goalId}/users`);
+        console.log("read from db ");
+        if (userFromDB) {
+          const userNames = userFromDB.map((user: Users) => {
+            return user.name;
           });
-        setUsers(data)
+          setUsers(userNames);
+          return;
+        }
+        const response = await fetch(
+          "https://jsonplaceholder.typicode.com/users"
+        );
+        console.log("reeading from API");
+        if (!response.ok) {
+          throw new Error(
+            `Something went wrong with the ${response.status} code`
+          );
+        }
+        const data = await response.json();
+        const userNames = data.map((user: Users) => {
+          writeToDB(user, `goals/${goalId}/users`);
+          return user.name;
+        });
+        setUsers(userNames);
       } catch (err) {
-        console.error("Error fetching users:", err);
+        console.log("fetching users ", err);
       }
     }
     getUsers();
@@ -65,8 +78,9 @@ export default function GoalUser({goalId}:GoalUserProps) {
     <View>
       <FlatList
         data={users}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <Text>{item.name}</Text>}
+        renderItem={({ item }) => {
+          return <Text>{item}</Text>;
+        }}
       />
     </View>
   );
