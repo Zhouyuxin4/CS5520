@@ -1,12 +1,14 @@
+import { Users } from "@/components/GoalUsers";
 import { database } from "./firebaseSetup";
 import { collection, addDoc, deleteDoc, doc, getDocs, setDoc, getDoc } from "firebase/firestore"; 
+
 
 export interface GoalData {
     text: string;
     warning?: boolean;
   }
 
-export async function writeToDB(data:GoalData, collectionName:string){
+export async function writeToDB(data:GoalData|Users, collectionName:string){
     try{
         const docRef = await addDoc(collection(database,collectionName),data)
     }
@@ -52,14 +54,27 @@ export async function readDocFromDB(id: string, collectionName: string) {
     }
 }
 
+//read all documents from the database
+export async function readAllFromDB(collectionName: string) {
+    const querySnapshot = await getDocs(collection(database, collectionName));
+    if (querySnapshot.empty) return null;
+    let data: Users[] = [];
+    querySnapshot.forEach((docSnapshot) => {
+      data.push(docSnapshot.data() as Users);
+    });
+    //return the data
+    return data;
+  }
+
 export async function updateDB(
-    id:string,
-    collectionName:string,
-    data:{[key:string]:any}
-){
-    try{
-        await setDoc(doc(database, collectionName, id), data, { merge: true })
-    }catch(err){
-        console.log(err)
+    id: string,
+    collectionName: string,
+    data: { [key: string]: any }
+  ) {
+    try {
+      //update a document in the database
+      await setDoc(doc(database, collectionName, id), data, { merge: true });
+    } catch (e) {
+      console.error("Error updating document: ", e);
     }
-}
+  }
