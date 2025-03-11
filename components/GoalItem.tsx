@@ -3,7 +3,7 @@ import { StyleSheet, TextInput, View, Text, Button, Modal, Alert, Image, Pressab
 import { useState } from 'react';
 import { Link, router } from 'expo-router';
 import { useRouter } from 'expo-router';
-import { GoalFromDB } from '@/app';
+import { GoalFromDB } from '@/app/(protected)';
 import PressableButton from './PressableButton';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
 
