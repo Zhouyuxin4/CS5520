@@ -6,6 +6,7 @@ import { collection, addDoc, deleteDoc, doc, getDocs, setDoc, getDoc } from "fir
 export interface GoalData {
     text: string;
     warning?: boolean;
+    owner?: string | null;
   }
 
 export async function writeToDB(data:GoalData|Users, collectionName:string){
