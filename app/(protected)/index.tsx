@@ -4,16 +4,20 @@ import Header from "../../components/Header"
 import Input from "../../components/Input"
 import { useState, useEffect } from 'react';
 import GoalItem from "../../components/GoalItem";
-import { database } from '../../Firebase/firebaseSetup';
+import { auth, database } from '../../Firebase/firebaseSetup';
 import { deleteAllFromDB, deleteFromDB, writeToDB } from '../../Firebase/firestoreHelper';
 import { GoalData } from '../../Firebase/firestoreHelper';
-import { collection, onSnapshot } from 'firebase/firestore';
-import { query } from 'express';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import PressableButton from '@/components/PressableButton';
 
 export interface GoalFromDB extends GoalData {
   id: string;
 }
+export interface UserInput {
+  text: string;
+  imageUri: string;
+}
+
 export default function App() {
   console.log(database)
   const [isFocused, setIsFocused] = useState(true);
@@ -21,33 +25,42 @@ export default function App() {
   const [goals, setGoals] = useState<GoalFromDB[]>([])
   const appName = "My awesome app"
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(database, "goals"), (querySnapshot) => {
+    const userId = auth.currentUser?.uid;
+    if (!userId) {
+      return;
+    }
+
+    const goalsQuery = query(collection(database, "goals"), where("owner", "==", userId));
+    // const goalsQuery= query(collection(database, "goals"), where("owner", "==", auth.currentUser.uid)) 
+    const unsubscribe = onSnapshot(goalsQuery, (querySnapshot) => {
       if (querySnapshot.empty) {
-        setGoals([])
+        setGoals([]); 
       } else {
-        let newArrayOfGoals: GoalFromDB[] = []
+        const newArrayOfGoals: GoalFromDB[] = [];
         querySnapshot.forEach((docSnapshot) => {
-          console.log(docSnapshot.id)
+          console.log(docSnapshot.id);
           const goalData: GoalData = docSnapshot.data() as GoalData;
           newArrayOfGoals.push({
-            ...(docSnapshot.data() as GoalData),
-            id: docSnapshot.id,
+            ...goalData, 
+            id: docSnapshot.id, 
           });
-          setGoals(newArrayOfGoals)
-        })
+        });
+        setGoals(newArrayOfGoals); 
       }
     });
-    return () => {
-      unsubscribe();
-    }
-  }, [])
 
-  function handleInputData(data: string) {
+    return () => {
+      unsubscribe(); 
+    };
+  }, []);
+
+  function handleInputData(data: UserInput) {
     console.log("data recieved from Input", data)
     setISModalVisible(false)
     
     let newGoal: GoalData = {
-      text: data,
+      text: data.text,
+      owner: auth.currentUser? auth.currentUser.uid : null,
     }
     writeToDB(newGoal, "goals")
 

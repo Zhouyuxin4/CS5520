@@ -5,6 +5,7 @@ import { GoalData, readDocFromDB, updateDB } from "@/Firebase/firestoreHelper";
 import Entypo from '@expo/vector-icons/Entypo';
 import PressableButton from "@/components/PressableButton";
 import GoalUsers from "@/components/GoalUsers";
+import ImageManager from "@/components/ImageManager";
 
 
 export default function GoalDetails() {
@@ -50,6 +51,7 @@ export default function GoalDetails() {
       />
       <Text style={warning && styles.warningText}>Details of {goal?.text}</Text>
       <GoalUsers goalId={id}/>
+
     </View>
   );
 }

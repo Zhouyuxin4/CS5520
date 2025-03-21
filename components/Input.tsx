@@ -1,10 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, TextInput, View, Text, Button, Modal, Alert, Image} from 'react-native';
 import { useState } from 'react';
+import ImageManager from './ImageManager';
+import { UserInput } from '@/app/(protected)';
 
 interface InputProps {
   isFocused: boolean;
-  inputHandler: (data: string) => void;
+  inputHandler: (data: UserInput) => void;
   isModalVisible: boolean;
   onCancel:()=>void;
 }
@@ -13,8 +15,13 @@ export default function App({ isFocused, inputHandler, isModalVisible,onCancel}:
   const [text, setText] = useState(''); 
   const [counter, setCounter] = useState('');
   const [blur, setBlur] = useState(false);
+  const [takenImageUri, setTakenImageUri] = useState("")
   const minLength = 3
   const localImage = require('../assets/goal-image.png')
+
+  const handleImageUri = (uri: string) => {
+    setTakenImageUri(uri); // Store the image URI in the state
+  };
 
   function updateText(changedText: string) {
     setText(changedText);
@@ -32,7 +39,7 @@ export default function App({ isFocused, inputHandler, isModalVisible,onCancel}:
 
   function handleConfirm() {
     console.log('User input:', text);
-    inputHandler(text);
+    inputHandler({ text: text, imageUri: takenImageUri });
     setText("")
   }
 
@@ -47,6 +54,7 @@ export default function App({ isFocused, inputHandler, isModalVisible,onCancel}:
       ]
     );
   }
+
 
   return (
     <Modal visible={isModalVisible} animationType='slide' transparent={true}>
@@ -77,6 +85,7 @@ export default function App({ isFocused, inputHandler, isModalVisible,onCancel}:
             blur &&
             (text.length >= minLength ? <Text>Thank you</Text> : <Text>Please type more than 3 characters</Text>)
           )}
+        <ImageManager  imageUriHandler={handleImageUri} />
         <View style={styles.button}>
         <View style={styles.buttonWrapper}>
             <Button title="Cancel" onPress={handleCancel} />
