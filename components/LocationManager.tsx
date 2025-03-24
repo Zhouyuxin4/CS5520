@@ -1,37 +1,88 @@
-import { Button, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
-import * as Location from 'expo-location';
+import {
+    Alert,
+    Button,
+    Dimensions,
+    Image,
+    StyleSheet,
+    Text,
+    View,
+  } from "react-native";
+  import React, { useState } from "react";
+  import {
+    getCurrentPositionAsync,
+    useForegroundPermissions,
+  } from "expo-location";
+  import { router, useLocalSearchParams } from "expo-router";
+  
+  export interface LocationData {
+    latitude: number;
+    longitude: number;
+  }
 
-export default function LocationManager() {
-    const [location, setLocation] = useState<Location.LocationObject | null>(null);
-    
-    async function verifyPermission(){
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          return false;
+  export default function LocationManager() {
+    const params = useLocalSearchParams();
+    // if (params) update the location state variable
+    console.log(params);
+    const [permissionResponse, requestPermission] = useForegroundPermissions();
+    const [location, setLocation] = useState<LocationData | null>(null);
+    async function verifyPermission() {
+      try {
+        if (permissionResponse?.status === "granted") {
+          return true;
         }
-        return true;
+        const responseFromUser = await requestPermission();
+        return responseFromUser.granted;
+      } catch (e) {
+        console.log("Error in verifyPermission", e);
       }
-
-    async function locateUserHandler(){
-        const hasPermission = await verifyPermission();
-        if(hasPermission){
-        try {
-          const response = await Location.getCurrentPositionAsync();
-          setLocation(response)
-          console.log(response.coords.altitude,response.coords.longitude)
+    }
+    async function locateUserHandler() {
+      try {
+        const hasPermission = verifyPermission();
+        if (!hasPermission) {
+          Alert.alert("You need to give permission to access location");
+          return;
         }
-        catch (err) {
-            console.log(err)
-        }
+        // only continue if hasPermission is true
+        const response = await getCurrentPositionAsync();
+        setLocation({
+          latitude: response.coords.latitude,
+          longitude: response.coords.longitude,
+        });
+      } catch (e) {
+        console.log("Error in getting location", e);
       }
-    };
-
-  return (
-    <View>
-      <Button title="find my location" onPress={locateUserHandler}/>
-    </View>
-  )
-}
-
-const styles = StyleSheet.create({})
+    }
+    function chooseLocationHandler() {
+      router.navigate("map");
+    }
+    if (location)
+      console.log(
+        `https://maps.googleapis.com/maps/api/staticmap?center=${location?.latitude},${location?.longitude}&zoom=14&size=400x200&maptype=roadmap&markers=color:red%7Clabel:L%7C${location?.latitude},${location?.longitude}&key=${process.env.EXPO_PUBLIC_mapsAPIKey}`
+      );
+    return (
+      <View>
+        <Button title="Find My Location" onPress={locateUserHandler} />
+        <Button
+          title="Let me choose on the map"
+          onPress={chooseLocationHandler}
+        />
+        {location && (
+          <Image
+            source={{
+              uri: `https://maps.googleapis.com/maps/api/staticmap?center=${location?.latitude},${location?.longitude}&zoom=14&size=400x200&maptype=roadmap&markers=color:red%7Clabel:L%7C${location?.latitude},${location?.longitude}&key=${process.env.EXPO_PUBLIC_mapsAPIKey}`,
+            }}
+            style={styles.map}
+          />
+        )}
+      </View>
+    );
+  }
+  
+  const styles = StyleSheet.create({
+    map: {
+      width: Dimensions.get("window").width,
+      height: 200,
+      marginTop: 10,
+    },
+  });
