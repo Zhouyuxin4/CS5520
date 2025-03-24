@@ -1,4 +1,4 @@
-import { View, Text, Button, StyleSheet } from "react-native";
+import { View, Text, Button, StyleSheet, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Stack, useLocalSearchParams, useNavigation } from "expo-router";
 import { GoalData, readDocFromDB, updateDB } from "@/Firebase/firestoreHelper";
@@ -6,12 +6,15 @@ import Entypo from '@expo/vector-icons/Entypo';
 import PressableButton from "@/components/PressableButton";
 import GoalUsers from "@/components/GoalUsers";
 import ImageManager from "@/components/ImageManager";
+import { storage } from "@/Firebase/firebaseSetup";
+import { getDownloadURL, ref } from "firebase/storage";
 
 
 export default function GoalDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [goal, setGoal] = useState<GoalData | null>(null);
   const [warning, setWarning] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   //   const navigation = useNavigation();
 
   useEffect(() => {
@@ -21,6 +24,12 @@ export default function GoalDetails() {
         if (data != null) {
           if (data?.warning) {
             setWarning(true);
+          }
+          if(data.imageUri){
+            const imageRef = ref(storage,data.imageUri)
+            const url = await getDownloadURL(imageRef)
+            console.log(url)
+            setImageUrl(url)
           }
           setGoal(data);
           //   navigation.setOptions({ headerTitle: data.text });
@@ -51,11 +60,18 @@ export default function GoalDetails() {
       />
       <Text style={warning && styles.warningText}>Details of {goal?.text}</Text>
       <GoalUsers goalId={id}/>
-
+      {imageUrl && (
+      <Image source={{ uri: imageUrl}} style={styles.image}/>
+    )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   warningText: { color: "red" },
+  image: {
+    width: 200,       
+    height: 200,
+    alignSelf: "center", 
+  },
 });

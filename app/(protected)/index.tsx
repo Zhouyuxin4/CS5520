@@ -4,11 +4,12 @@ import Header from "../../components/Header"
 import Input from "../../components/Input"
 import { useState, useEffect } from 'react';
 import GoalItem from "../../components/GoalItem";
-import { auth, database } from '../../Firebase/firebaseSetup';
+import { auth, database, storage } from '../../Firebase/firebaseSetup';
 import { deleteAllFromDB, deleteFromDB, writeToDB } from '../../Firebase/firestoreHelper';
 import { GoalData } from '../../Firebase/firestoreHelper';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import PressableButton from '@/components/PressableButton';
+import { ref, uploadBytesResumable } from 'firebase/storage';
 
 export interface GoalFromDB extends GoalData {
   id: string;
@@ -54,15 +55,43 @@ export default function App() {
     };
   }, []);
 
-  function handleInputData(data: UserInput) {
+  async function fetchImage(uri: string) {
+    try {
+      const response = await fetch(uri);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.status} ${response.statusText}`);
+      }  
+      const blob = await response.blob(); // Get the image as a Blob
+      const imageName = uri.substring(uri.lastIndexOf('/') + 1);
+      const imageRef = ref(storage, `images/${imageName}`)
+      const uploadResult = await uploadBytesResumable(imageRef, blob);
+      console.log(uploadResult)
+      return uploadResult.metadata.fullPath
+    } catch (error) {
+      console.error("Error fetching image:", error);
+      return null; // Return null or handle the error in another way
+    }
+  }
+  
+
+  async function handleInputData(data: UserInput) {
     console.log("data recieved from Input", data)
     setISModalVisible(false)
-    
-    let newGoal: GoalData = {
-      text: data.text,
-      owner: auth.currentUser? auth.currentUser.uid : null,
+    try{
+      let storedImageUri;
+      if(data.imageUri){
+        storedImageUri = await fetchImage(data.imageUri)
+      }
+      
+      let newGoal: GoalData = {
+        text: data.text,
+        owner: auth.currentUser? auth.currentUser.uid : null,
+        imageUri: storedImageUri
+      }
+      writeToDB(newGoal, "goals")}
+    catch{
+
     }
-    writeToDB(newGoal, "goals")
 
     // let newArray = [...goals, newGoal]
     // setGoals((currentGoals) => {
