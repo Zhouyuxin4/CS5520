@@ -7,6 +7,7 @@ export interface GoalData {
     text: string;
     warning?: boolean;
     owner?: string | null;
+    imageUri?: string | null;
   }
 
 export async function writeToDB(data:GoalData|Users, collectionName:string){
