@@ -8,16 +8,27 @@ export interface GoalData {
     warning?: boolean;
     owner?: string | null;
     imageUri?: string | null;
+    id?:string
   }
 
-export async function writeToDB(data:GoalData|Users, collectionName:string){
-    try{
-        const docRef = await addDoc(collection(database,collectionName),data)
+  export async function writeToDB(
+    data: GoalData | Users,
+    collectionName: string,
+    id?: string
+  ) {
+    try {
+      if (id) {
+        const newDocRef = await setDoc(doc(database, collectionName, id), data, {
+          merge: true,
+        });
+      } else {
+        const docRef = await addDoc(collection(database, collectionName), data);
+      }
+    } catch (e) {
+      console.error("Error adding document: ", e);
     }
-    catch(err){
-        console.error(err)
-    }
-}
+  }
+  
 export async function deleteFromDB(id:string, collectionName:string){
     try{
         await deleteDoc(doc(database, collectionName, id));
