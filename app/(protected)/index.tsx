@@ -10,6 +10,7 @@ import { GoalData } from '../../Firebase/firestoreHelper';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import PressableButton from '@/components/PressableButton';
 import { ref, uploadBytesResumable } from 'firebase/storage';
+import { setNotificationHandler } from 'expo-notifications';
 
 export interface GoalFromDB extends GoalData {
   id: string;
@@ -18,6 +19,14 @@ export interface UserInput {
   text: string;
   imageUri: string;
 }
+
+setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true, 
+    shouldPlaySound: true, 
+    shouldSetBadge: true,
+  }),
+})
 
 export default function App() {
   console.log(database)
@@ -30,7 +39,6 @@ export default function App() {
     if (!userId) {
       return;
     }
-
     const goalsQuery = query(collection(database, "goals"), where("owner", "==", userId));
     // const goalsQuery= query(collection(database, "goals"), where("owner", "==", auth.currentUser.uid)) 
     const unsubscribe = onSnapshot(goalsQuery, (querySnapshot) => {

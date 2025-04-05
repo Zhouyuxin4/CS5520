@@ -3,33 +3,16 @@ import React, { useEffect, useState } from "react";
 import { View, Text, FlatList } from "react-native";
 
 export interface Users {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-  address: Address;
-  phone: string;
-  website: string;
-  company: Company;
-}
-
-export interface Address {
-  street: string;
-  suite: string;
-  city: string;
-  zipcode: string;
-  geo: Geo;
-}
-
-export interface Geo {
-  lat: string;
-  lng: string;
-}
-
-export interface Company {
-  name: string;
-  catchPhrase: string;
-  bs: string;
+  id?: number;
+  name?: string;
+  username?: string;
+  email?: string;
+  address?: {
+    geo:{
+      lat: string;
+      lng: string;
+    }
+  };
 }
 
 interface GoalUserProps{
@@ -47,7 +30,7 @@ export default function GoalUser({goalId}:GoalUserProps) {
         console.log("read from db ");
         if (userFromDB) {
           const userNames = userFromDB.map((user: Users) => {
-            return user.name;
+            return user.name || "Unknown User";
           });
           setUsers(userNames);
           return;
