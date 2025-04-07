@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, TextInput, View, Text, Button, SafeAreaView, FlatList, ScrollView, Alert, Linking } from 'react-native';
+import Constants from 'expo-constants';
 import Header from "../../components/Header"
 import Input from "../../components/Input"
 import { useState, useEffect } from 'react';
@@ -10,7 +11,7 @@ import { GoalData } from '../../Firebase/firestoreHelper';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import PressableButton from '@/components/PressableButton';
 import { ref, uploadBytesResumable } from 'firebase/storage';
-import { addNotificationReceivedListener, setNotificationHandler, EventSubscription } from 'expo-notifications';
+import { addNotificationReceivedListener, setNotificationHandler, EventSubscription, getExpoPushTokenAsync } from 'expo-notifications';
 import { response } from 'express';
 
 export interface GoalFromDB extends GoalData {
@@ -47,6 +48,33 @@ export default function App() {
     return () => {
       subscription.remove();
     };
+  }, []);
+
+  useEffect(()=>{
+    async function fetchToken(){
+      try{
+        // const hasPermission = verifyPermission();
+        // if(!hasPermission){
+        //   Alter.alert(
+        //     "Permission not granted",
+        //     "add notification"
+        //   )
+        // }
+        // if (Platform.OS === "android") {
+        //   await Notifications.setNotificationChannelAsync("default", {
+        //     name: "default",
+        //     importance: Notifications.AndroidImportance.MAX,
+        //   });
+        // }
+        const tokenInfo = await getExpoPushTokenAsync();
+        const projectId = Constants.expoConfig?.extra?.eas.projectId;
+        console.log(tokenInfo)
+        console.log(projectId)
+      }catch(err){
+        console.log(err)
+      }
+    }
+    fetchToken();
   }, []);
 
   useEffect(() => {
@@ -152,6 +180,19 @@ export default function App() {
       ]
     );
   }
+  function testPushNotification() {
+    fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        to: "ExponentPushToken[uo9a4rFK8gfIgJUnbDcbTW]" ,
+        title: "Push Notification",
+        body: "This is a push notification",
+      })
+    })
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -167,6 +208,7 @@ export default function App() {
             <Text style={styles.addGoalButton}>add a goal</Text>
           </PressableButton>
           {/* <Button title="Add a goal" onPress={handleModalVisibility} /> */}
+          <Button title="test" onPress={testPushNotification}/>
           </View>
       </View>
       <View style={styles.bottomContainer}>
