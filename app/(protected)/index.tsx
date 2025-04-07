@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, TextInput, View, Text, Button, SafeAreaView, FlatList, ScrollView, Alert } from 'react-native';
+import { StyleSheet, TextInput, View, Text, Button, SafeAreaView, FlatList, ScrollView, Alert, Linking } from 'react-native';
 import Header from "../../components/Header"
 import Input from "../../components/Input"
 import { useState, useEffect } from 'react';
@@ -10,7 +10,8 @@ import { GoalData } from '../../Firebase/firestoreHelper';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import PressableButton from '@/components/PressableButton';
 import { ref, uploadBytesResumable } from 'firebase/storage';
-import { setNotificationHandler } from 'expo-notifications';
+import { addNotificationReceivedListener, setNotificationHandler, EventSubscription } from 'expo-notifications';
+import { response } from 'express';
 
 export interface GoalFromDB extends GoalData {
   id: string;
@@ -34,6 +35,20 @@ export default function App() {
   const [isModalVisible, setISModalVisible] = useState(false)
   const [goals, setGoals] = useState<GoalFromDB[]>([])
   const appName = "My awesome app"
+
+  useEffect(() => {
+    const subscription: EventSubscription = addNotificationReceivedListener((response) => {
+      console.log(response.request.content.data)
+      if (response.request.content.data?.url) {
+        Linking.openURL(response.request.content.data.url);
+      }
+    });
+    // Cleanup function to unsubscribe from the listener
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
   useEffect(() => {
     const userId = auth.currentUser?.uid;
     if (!userId) {

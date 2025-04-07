@@ -28,10 +28,12 @@ export default function NotificationManager() {
         content: {
           title: "Reminder",
           body: "Please update your goals!", 
+          data: {url:"https://www.google.com"}
         },
         trigger: { 
           seconds: 5, 
           repeats: false, 
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL
         } as Notifications.TimeIntervalTriggerInput,
       });
     } catch (err) {
