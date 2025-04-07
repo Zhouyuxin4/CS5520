@@ -20,7 +20,14 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permission": [
+        "android.permission.CAMERA"
+      ],
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.renie.cs5520"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -34,6 +41,14 @@
           "cameraPermission": "The app needs access to your camera."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "2edb2101-0951-424b-beb0-d06f4f6c043e"
+      }
+    }
   }
 }
